@@ -1,6 +1,6 @@
 // src/db/sequelize.js
 import { Sequelize } from 'sequelize';
-import dbConfig from '../config/db.js';
+import dbConfig from '../config/db.config.js';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const config = dbConfig[nodeEnv];
