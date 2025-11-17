@@ -44,3 +44,12 @@ export const loginUserSchema = z.object({
     .min(1, "Please provide password.")
     .max(16, "Password must be at most 16 characters.")
 })
+
+export const createEventSchema = z.object({
+  name: z.string().min(1, "Event name is required").max(100, "Event name must be at most 100 characters"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/, "Use format YYYY-MM-DD HH:mm"),
+  location: z.string().min(1, "Event location is required").max(100, "Event location must be at most 100 characters"),
+  totalSeats: z.number().int().nonnegative("Total seats must be a non-negative integer")
+})
+
+export const updateEventSchema = createEventSchema.partial()
