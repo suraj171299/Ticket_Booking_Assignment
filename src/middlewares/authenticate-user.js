@@ -33,7 +33,8 @@ export const authenticateUser = async (req, res, next) => {
 }
 
 export function authorizeAdmin(req, res, next) {
-  if (!req.user) throw new UnauthorizedError("User not authenticated");
+  const user = req.user;
+  if (!user) throw new UnauthorizedError("User not authenticated");
   if (req.user.role !== 'ADMIN') throw new ForbiddenError("Admin privileges required");
   next();
 }

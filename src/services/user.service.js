@@ -4,8 +4,14 @@ import BadRequestError from '../errors/bad-request-error.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/token-util.js';
 import NotFoundError from '../errors/not-found-error.js';
 import UnauthorizedError from '../errors/unauthorized-error.js';
+import ForbiddenError from '../errors/forbidden-error.js';
 
-export async function createUser({ name, email, password }) {
+export async function createUser({ name, email, password, role, creatorRole }) {
+
+  if (role === 'ADMIN' && creatorRole !== 'ADMIN') {
+    throw new ForbiddenError('Only ADMIN users can create users with elevated roles');
+  }
+
   if (!name || !email || !password) {
     throw new BadRequestError('Name, email and password are required to create a user');
   }
@@ -16,7 +22,7 @@ export async function createUser({ name, email, password }) {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, email, password: hashedPassword, role: 'USER' });
+  const user = await User.create({ name, email, password: hashedPassword, role });
   return user;
 }
 

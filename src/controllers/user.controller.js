@@ -4,7 +4,7 @@ import ApiResponse from "../utils/api-response.js";
 export const registerUserHandler = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
-    const user = await createUser({ name, email, password });
+    const user = await createUser({ name, email, password, role: 'USER', creatorRole: 'USER' });
     const userData = {
       id: user.id,
       name: user.name,
@@ -12,6 +12,23 @@ export const registerUserHandler = async (req, res, next) => {
       role: user.role,
     }
     return res.status(201).json(new ApiResponse(201, userData, 'User registered successfully'));
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const createUserByAdminHandler = async (req, res, next) => {
+  try {
+    const { name, email, password, role } = req.body;
+    const creatorRole = req.user.role;
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    }
+    const user = await createUser({ name, email, password, role, creatorRole });
+    return res.status(201).json(new ApiResponse(201, userData, 'Admin User created successfully'));
   } catch (error) {
     next(error)
   }

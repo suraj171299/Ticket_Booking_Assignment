@@ -34,6 +34,6 @@ export default (sequelize, DataTypes) => {
   }, {
     tablename: 'users',
     timestamps: true,
-    indexes: [{ name: 'idx_users_email', fields: ['email'] }]
+    underscored: true,
   })
 }
