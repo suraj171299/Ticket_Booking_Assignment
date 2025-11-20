@@ -4,6 +4,7 @@ import { sequelize } from './utils/database.js';
 import dotenv from 'dotenv';
 import fs from 'fs'
 import logger from './utils/logger.js';
+import { scheduleExpireHolds } from './jobs/expire-holds.js';
 dotenv.config({
   path: './src/.env'
 });
@@ -29,8 +30,7 @@ const startServer = async () => {
     await sequelize.authenticate();
     logger.info('Database connected successfully.');
 
-    // await sequelize.sync({ alter: false });
-    // logger.info('Database synchronized successfully.');
+    scheduleExpireHolds()
 
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT} in ${process.env.NODE_ENV} mode.`);

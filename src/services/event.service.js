@@ -1,4 +1,4 @@
-import { isValid, parse } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 import BadRequestError from "../errors/bad-request-error.js";
 import { Booking, Event, Hold } from "../models/index.js";
@@ -110,7 +110,9 @@ export async function deleteEvent(eventId) {
 }
 
 export async function getEventAvailability(eventId) {
-  const event = await Event.findByPk(eventId);
+  const event = await Event.findByPk(eventId, {
+    attributes: ['id', 'name', 'date', 'location', 'total_seats']
+  });
   if (!event) {
     throw new NotFoundError('Event not found');
   }
@@ -120,7 +122,7 @@ export async function getEventAvailability(eventId) {
   const heldSeats = await Hold.sum('seats', {
     where: {
       event_id: eventId,
-      status: 'ACTIVE' || 'CONFIRMED',
+      status: 'ACTIVE',
       expires_at: { [Op.gt]: now }
     }
   })
@@ -131,6 +133,9 @@ export async function getEventAvailability(eventId) {
 
   const eventCapacity = {
     event_id: event.id,
+    event_name: event.name,
+    event_data: format(event.date, "yyyy-MM-dd HH:mm"),
+    event_location: event.location,
     total_seats: event.total_seats,
     held_seats: heldSeats || 0,
     booked_seats: bookedSeats || 0,
